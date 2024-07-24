@@ -1,6 +1,5 @@
-#setwd("C:/Users/User/Desktop/IBICT/observatorio empreendorismo/app")
+#setwd("C:/Users/User/Desktop/IBICT/observatorio empreendorismo/app/observatorio")
 library(shiny)
-library(markdown)
 library(shinyWidgets)
 library(ggplot2)
 library(dplyr)
@@ -64,7 +63,7 @@ x1$socio=with(x1,
 ###########################################################################################
 
 
-ui=navbarPage(shinyWidgets::useShinydashboard(),title="OEMFE",
+ui=navbarPage(shinyWidgets::useShinydashboard(),title="OEMFE", header = includeCSS('style.css'),
               #########################TABPNAEL###############################
               tabPanel("Sociodemográfico",
                        inputPanel(
@@ -178,15 +177,13 @@ ui=navbarPage(shinyWidgets::useShinydashboard(),title="OEMFE",
                                      choices =sort(unique(data4$gender)),
                                      selected = "Mulher")),
                        mainPanel(
-                         fluidRow(div(column(6,div(style="width:600px;",DTOutput("table1"))),style="position: relative;left: -255px;bottom:-50px;"),
+                         fluidRow(div(column(6,div(style="width:600px;",DTOutput("table1"))),style="position: relative;left: -255px;bottom:0px;"),
                                   div(column(6,div(style="width:600px;",DTOutput("table5")))),style="position: relative;left: 255px;bottom:-50px;"),
                          
-                         fluidRow(div(column(6,div(style="width:600px;position: relative;bottom:50px;",DTOutput("table2"))),style="position: relative;left: -255px;bottom:-100px;"),
-                                  div(column(6,div(style="width:600px;",DTOutput("table4")))),style="position: relative;left: 255px;bottom:-100px;"),
-                         
-                         fluidRow(div(column(6,div(style="position: relative;bottom:-100px",DTOutput("table3")),style="position: relative;left: 150px;bottom:-100px;")))       ))
+                         fluidRow(div(column(6,div(style="width:600px;position: relative;bottom:50px;",DTOutput("table2"))),style="position: relative;left: -255px;bottom:-50px;"),
+                                  div(column(6,div(style="width:600px;",DTOutput("table4")))),style="position: relative;left: 255px;bottom:-100px;")
+                       ))
 )
-
 server=function(input, output, session) {
   ######################## TABPANEL 1
   output$box_1 <- shinydashboard::renderValueBox({
@@ -437,28 +434,20 @@ server=function(input, output, session) {
     x2$X..Adultos=round(x2$X..Adultos*100,2)
     names(x2)=c("Atitudes e Percepções","% Adultos")
     x2$`% Adultos`=paste0(x2$`% Adultos`,"%")
-    x2
-  })
-  output$table3=renderDT({
-    z=data4%>%filter(gender %in% input$sexo4,yrsurv %in% input$ano4)
-    x=data.frame(`Pesquisa de Opnião`=
-                   c("concorda que raramente vê oportunidades de negócios",
-                     "concorda que, mesmo quando identificam uma oportunidade lucrativa, raramente agem de acordo com ela",
-                     "concorda que outras pessoas os consideram altamente inovadores.",
-                     "concorda que cada decisão que tomam faz parte do seu plano de carreira a longo prazo."))
-    x1=data.frame(rbind(prop.table(table(z$OPPISMyy)),#population who agree that they rarely see business opportunities
-                        prop.table(table(z$PROACTyy)),#population who agree that even when they spot a profitable opportunity, they rarely act on it. 
-                        prop.table(table(z$CREATIVyy)),#population who agree that other people think they are highly innovative.
-                        prop.table(table(z$VISIONyy))))#population who agree that every decision they make is part of their long-term career plan.
-    x2=as.data.frame(cbind(x,x1))
-    x2=x2%>%mutate_if(is.numeric,~ round(. * 100,2))
-    x2=x2%>%mutate_if(is.numeric,~paste0(. ,"%"))
+    datatable(x2,
+              rownames = FALSE, 
+              options = list(pageLength = 10, dom = 't',
+                             initComplete = JS(
+                               "function(settings, json) {",
+                               "$(this.api().table().header()).css({'background-color': 'darkblue', 'color':'#E69F00'});",
+                               "}")))%>%
+      
+      formatStyle(columns = "Atitudes e Percepções",target = "cell", backgroundColor = "#B0C4DE")%>%
+      formatStyle(columns = "% Adultos", target = "cell", backgroundColor = "#B0C4DE")
     
-    names(x2)=c("Pesquisa de Opnião","Discorda completamente","Discorda parcialmente",
-                "Não discorda nem concorda","Concorda parcialmente","Concorda completamente")
-    x2
     
   })
+  
   output$table4=renderDT({
     z=data4%>%filter(gender %in% input$sexo4,yrsurv %in% input$ano4)
     p=data.frame(prop.table(table(z$EXIT_RS)))
@@ -466,7 +455,17 @@ server=function(input, output, session) {
       arrange(desc(Freq))%>%
       mutate_if(is.numeric,~paste0(. ,"%"))
     names(p)=c("Razões da saída do negócio","Porcentagem")
-    p
+    datatable(p,
+              rownames = FALSE, 
+              options = list(pageLength = 10, dom = 't',
+                             initComplete = JS(
+                               "function(settings, json) {",
+                               "$(this.api().table().header()).css({'background-color': 'darkblue', 'color':'#E69F00'});",
+                               "}")))%>%
+      
+      formatStyle(columns = "Razões da saída do negócio",target = "cell", backgroundColor = "#B0C4DE")%>%
+      formatStyle(columns = "Porcentagem", target = "cell", backgroundColor = "#B0C4DE")
+    
   })
   output$table5=renderDT({
     z=data4%>%filter(gender %in% input$sexo4,yrsurv %in% input$ano4)
@@ -483,7 +482,18 @@ server=function(input, output, session) {
     x2=x2%>%mutate_if(is.numeric,~ round(. * 100,2))
     x2=x2%>%mutate_if(is.numeric,~paste0(. ,"%"))
     names(x2)=c("No meu País","Discordo","Concordo")
-    x2
+    datatable(x2,
+              rownames = FALSE, 
+              options = list(pageLength = 10, dom = 't',
+                             initComplete = JS(
+                               "function(settings, json) {",
+                               "$(this.api().table().header()).css({'background-color': 'darkblue', 'color':'#E69F00'});",
+                               "}")))%>%
+      
+      formatStyle(columns = "No meu País",target = "cell", backgroundColor = "#B0C4DE")%>%
+      formatStyle(columns = "Discordo", target = "cell", backgroundColor = "#B0C4DE")%>%
+      formatStyle(columns = "Concordo", target = "cell", backgroundColor = "#B0C4DE")
   })
 }
 shinyApp(ui,server)
+
