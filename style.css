@@ -1,0 +1,15 @@
+/*container-fluid*/
+.navbar { background-color: #002f54;} 
+.navbar-default .navbar-nav > li > a {color:white; }
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:focus,
+                                            
+.tabs-above > .nav > li[class=active] > a {background-color: darkcyan;color:#FFF;}
+.tabbable > .nav > li >a{background-color: darkcyan; color:white;}
+.tabbable > .nav > li {float: left;width:25%; text-align: center;}
+.tabbable > .nav > li[class=active] > a {background-color: #002f54;;color:white;}
+.navbar-default .navbar-nav > li > a[data-value='OEMFE'] {float:right;}
+                                            }
+
+.shiny-input-panel{padding: 0px 0px !important;
+                  background-color: black;}
