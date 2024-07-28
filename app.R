@@ -37,7 +37,7 @@ x1$Região=with(x1,
                       "Norte",
                       ifelse(UF %in% c('Piauí', 'Maranhão', 'Pernambuco', 'Rio Grande do Norte', 'Paraíba', 
                                        'Ceará', 'Bahia', 'Alagoas', 'Sergipe'),"Nordeste",
-                             ifelse(UF %in% c('Mato Grosso', 'Mato Grosso do Sul', 'Goiás'), "Centro-Oeste",
+                             ifelse(UF %in% c('Mato Grosso', 'Mato Grosso do Sul', 'Goiás',"Distrito Federal"), "Centro-Oeste",
                                     ifelse(UF %in% c('São Paulo', 'Rio de Janeiro', 'Espírito Santo', 'Minas Gerais'),
                                            "Sudeste","Sul"
                                     )))))
